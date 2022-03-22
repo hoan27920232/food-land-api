@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import AutoInrement from "mongoose-sequence";
 import mongooseKeywords from "mongoose-keywords";
 import { cleanAccents } from "../../services/format/index.js";
-
+import { addressSchema } from "./KhachHang.js";
 const AutoIncrement = AutoInrement(mongoose);
 const Schema = mongoose.Schema;
 
@@ -75,6 +75,10 @@ const donhangSchema = new Schema(
     NgayHoanThanh: {
       type: Date,
     },
+    Discount: {
+      type: Number,
+      ref: 'discount'
+    }
   },
   { timestamps: true }
 );

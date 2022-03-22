@@ -107,7 +107,6 @@ const show = async ({ params }, res) => {
 const create = async (req, res) => {
   try {
     if (req.body.items && req.body.items.length) {
-      console.log(req.body.items.map((i) => i.sanpham._id));
       const products = await SanPham.find({
         _id: { $in: req.body.items.map((i) => i.sanpham._id) },
       });
@@ -168,11 +167,11 @@ const create = async (req, res) => {
       })
       .then(async (data) => {
         const adminTitle = "New order from Food Land";
-        console.log(data.data.items[0].sanpham.AnhMoTa)
+        console.log(data.data, "Helooooo")
         await sendGmail(
           {
-            to: data.data.email,
-            subject: `New order from PinupVintageHouse.com [${data.data._id}]`,
+            to: data.data.email || "allfallsdown20@gmail.com",
+            subject: `New order from foodland.com [${data.data._id}]`,
             message: pug.renderFile(`${__dirname}/template.pug`, {
               title: adminTitle,
               order: data.data,
