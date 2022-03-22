@@ -43,5 +43,5 @@ discountSchema.plugin(mongoose_delete, {
   overrideMethods: "all",
   withDeleted: true,
 });
-const discount = mongoose.model("DanhMucBlog", discountSchema);
+const discount = mongoose.model("Discount", discountSchema);
 export default discount;

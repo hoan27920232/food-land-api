@@ -1,5 +1,5 @@
 import { cleanAccents } from '../../services/format/index.js'
-import Discount from '../models/Discount'
+import Discount from '../models/Discount.js'
 'use strict'
 const index = ({ querymen: { query, select, cursor } }, res, next) => {
   if (query.keywords) {
