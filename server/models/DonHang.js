@@ -77,7 +77,7 @@ const donhangSchema = new Schema(
     },
     Discount: {
       type: Number,
-      ref: 'discount'
+      ref: 'Discount'
     }
   },
   { timestamps: true }
@@ -88,13 +88,6 @@ donhangSchema.pre("save", async function () {
 });
 
 donhangSchema.path("items").set(function (items) {
-  if (items && items.length) {
-    this.TongTien = items
-      .map((item) => {
-        return item.sanpham.DonGia * item.soluong;
-      })
-      .reduce((a, b) => a + b, 0);
-  }
   this._oldItems = this.items;
   return items;
 });
@@ -113,7 +106,6 @@ donhangSchema.post("save", async function (doc) {
     doc.items.map((i) => i.sanpham.save());
   } else {
     await doc.populate("items.sanpham");
-
     const oldProducts = await this.model("SanPham").find({
       _id: { $in: this._oldItems.map((i) => i.sanpham) },
     });
@@ -190,7 +182,9 @@ donhangSchema.post("save", async function (doc) {
 
     await removedItems.map((i) => i.sanpham.save());
     await addedItems.map((i) => i.sanpham.save());
+
   }
+
 });
 donhangSchema.post("remove", async function (doc) {
   await doc.populate('items.sanpham')
