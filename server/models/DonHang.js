@@ -44,6 +44,11 @@ const donhangSchema = new Schema(
       type: String,
       required: true,
     },
+    shippingAddress: addressSchema,
+    feeShipping: {
+      type: Number,
+      default: 0
+    },
     SDT: {
       type: String,
       required: true,

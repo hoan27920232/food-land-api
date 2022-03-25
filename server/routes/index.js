@@ -9,6 +9,7 @@ import DanhMucBlog from './DanhMucBlog.js'
 import KhachHang from './KhachHang.js'
 import Blog from './Blog.js'
 import Setting from './Setting.js'
+import GHTK from './GHTK.js'
 function route(app){
     app.use('/api/sanphams', SanPham)
     app.use('/api/taikhoans', TaiKhoan)
@@ -20,5 +21,6 @@ function route(app){
     app.use('/api/khachhangs',KhachHang)
     app.use('/api/blogs',Blog)
     app.use('/api/settings',Setting)
+    app.use('/api/ghtk',GHTK)
 }
 export default route

@@ -8,10 +8,10 @@ import { cleanAccents } from "../../services/format/index.js";
 const AutoIncrement = AutoInrement(mongoose);
 const Schema = mongoose.Schema;
 export const addressSchema = new Schema({
-  postCode: {
-    type: String,
-    maxlength: 10,
-  },
+  // postCode: {
+  //   type: String,
+  //   maxlength: 10,
+  // },
   provinceOrCity: {
     name: {
       type: String,
@@ -81,6 +81,7 @@ const khachhangSchema = new Schema({
     type: String,
     required: true,
   },
+  shippingAddress: addressSchema,
   email: {
     type: String,
     match: /^\S+@\S+\.\S+$/,
