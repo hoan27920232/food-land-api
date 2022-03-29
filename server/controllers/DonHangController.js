@@ -228,9 +228,8 @@ const momo = async (req, res) => {
         .then((data) => res.status(200).json(data))
         .catch((err) => res.status(500).json(err));
     }
-    return res.status(200).json({ data: req.body });
+    
   } catch (err) {
-    return res.status(500).json({ message: err });
   }
 };
 const update = async (req, res) => {

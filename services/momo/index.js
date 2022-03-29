@@ -61,7 +61,6 @@ export const request_momo = async (order) => {
     signature: signature,
     lang: "vi",
   };
-  console.log(params);
   const url = "/v2/gateway/api/create";
   try {
     const data = await axiosClinet.post(url, params);
