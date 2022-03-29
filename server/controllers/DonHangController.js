@@ -225,11 +225,12 @@ const momo = async (req, res) => {
         { _id: orderId.split("-")[1] },
         { TinhTrangThanhToan: 1 }
       )
-        .then((data) => res.status(200).json(data))
-        .catch((err) => res.status(500).json(err));
+        .then((data) => console.log(data))
+        .catch((err) => console.log(err));
     }
-    
+    return res.status(200).json({ data: req.body });
   } catch (err) {
+    return res.status(500).json({ message: err });
   }
 };
 const update = async (req, res) => {
