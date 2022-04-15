@@ -23,6 +23,10 @@ const sanphamSchema = new Schema(
       type: Number,
       required: true,
     },
+    KhoiLuong: {
+      type: Number,
+      required: true
+    },
     MoTa: {
       type: String,
     },

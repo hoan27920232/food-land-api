@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import axiosClinet from "../axios/index.js";
+import axiosClient from "../axios/index.js";
 import pkg from 'crypto-js';
 const { HmacSHA256 } = pkg;
 
@@ -64,7 +64,7 @@ export const request_momo = async (order) => {
   console.log(params);
   const url = "/v2/gateway/api/create";
   try {
-    const data = await axiosClinet.post(url, params);
+    const data = await axiosClient.post(url, params);
     payUrl = data.payUrl;
   } catch (err) {
     console.log(err.message);

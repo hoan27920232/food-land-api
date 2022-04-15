@@ -65,6 +65,11 @@ const donhangSchema = new Schema(
       enum: [0, 1],
       required: true,
     },
+    shipMoney: {
+      type: Number,
+      default: 0,
+      required: true
+    },
     KieuThanhToan: {
       type: String,
       enum: ["cod", "momo"],

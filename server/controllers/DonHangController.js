@@ -181,7 +181,6 @@ const create = async (req, res) => {
       })
       .then(async (data) => {
         const adminTitle = "New order from Food Land";
-        console.log(data.data, "Helooooo");
         await sendGmail({
           to: data.data.email || "allfallsdown20@gmail.com",
           subject: `New order from foodland.com [${data.data._id}]`,

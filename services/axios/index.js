@@ -1,7 +1,7 @@
 import axios from 'axios'
 import queryString from 'query-string'
 
-const axiosClinet = axios.create({
+const axiosClient = axios.create({
     baseURL: 'https://test-payment.momo.vn',
 
     headers: {
@@ -11,15 +11,15 @@ const axiosClinet = axios.create({
     paramsSerializer: params => queryString.stringify(params)
 })
 
-axiosClinet.interceptors.request.use(async (config)=> {
+axiosClient.interceptors.request.use(async (config)=> {
     return config
 })
 
-axiosClinet.interceptors.response.use((response) => {
+axiosClient.interceptors.response.use((response) => {
     if(response && response.data) return response.data 
     return response
 }, (error) => {
     throw error
 })
 
-export default axiosClinet;
+export default axiosClient;
