@@ -11,7 +11,7 @@ export const request_momo = async (order) => {
   var accessKey = process.env.ACCESS_KEY;
   var secretkey = process.env.SECRET_KEY;
   var requestId = partnerCode + new Date().getTime();
-  var orderId = 'ORD-' + order._id;
+  var orderId = 'ORDERMOMO-' + order._id;
   var orderInfo = "paywithMoMo";
   var redirectUrl = process.env.WEB_URL + "checkout/confirm";
   var ipnUrl = `${process.env.API_URL}api/donhangs/momo`;
@@ -61,7 +61,6 @@ export const request_momo = async (order) => {
     signature: signature,
     lang: "vi",
   };
-  console.log(params);
   const url = "/v2/gateway/api/create";
   try {
     const data = await axiosClient.post(url, params);
