@@ -1,5 +1,6 @@
 import DonHang from "../models/DonHang.js";
 import SanPham from "../models/SanPham.js";
+import Discount from "../models/Discount.js";
 import { request_momo } from "../../services/momo/index.js";
 import crypto from "crypto";
 import pug from "pug";
@@ -36,6 +37,10 @@ const index = ({ querymen: { query, select, cursor } }, res, next) => {
         })
         .populate({
           path: "MaTaiKhoan",
+          options: { withDeleted: true },
+        })
+        .populate({
+          path: "Discount",
           options: { withDeleted: true },
         })
         .then((donhang) => ({
@@ -106,11 +111,12 @@ const show = async ({ params }, res) => {
 };
 const create = async (req, res) => {
   try {
+    let tongTien = 0;
     if (req.body.items && req.body.items.length) {
-      console.log(req.body.items.map((i) => i.sanpham._id));
       const products = await SanPham.find({
         _id: { $in: req.body.items.map((i) => i.sanpham._id) },
       });
+      const discount = await Discount.findOne({ _id: req.body.Discount });
       if (products && products.length) {
         let notice = "";
         let count = 0;
@@ -132,6 +138,7 @@ const create = async (req, res) => {
               notice + `Sản phẩm có id bằng ${p.code} không đủ số lượng \n`;
           } else {
             req.body.items[index].sanpham = p;
+            tongTien += item.soluong * p.DonGia
           }
         }
         if (count > 0) {
@@ -142,13 +149,20 @@ const create = async (req, res) => {
           .status(500)
           .json({ message: "Không tìm thấy sản phẩm nào phù hợp" });
       }
+      if (discount) {
+        tongTien =
+        tongTien *
+            (100 - discount.discount) /
+          100;
+      }
     }
-    DonHang.create({ ...req.body })
+
+    DonHang.create({ ...req.body, TongTien: tongTien })
       .then((donhang) =>
         donhang.populate([
           {
             path: "items.sanpham",
-            fields: 'AnhMoTa TenSanPham',
+            fields: "AnhMoTa TenSanPham",
             populate: {
               path: "AnhMoTa",
               fields: "source",
@@ -163,7 +177,6 @@ const create = async (req, res) => {
         if (data.KieuThanhToan == "momo") {
           payUrl = await request_momo(data);
         }
-
         return { data, payUrl };
       })
       .then(async (data) => {
@@ -222,8 +235,8 @@ const momo = async (req, res) => {
         { _id: orderId.split("-")[1] },
         { TinhTrangThanhToan: 1 }
       )
-        .then((data) => console.log(data))
-        .catch((err) => console.log(err));
+        .then((data) => res.status(200).json(data))
+        .catch((err) => res.status(500).json(err));
     }
     return res.status(200).json({ data: req.body });
   } catch (err) {
@@ -232,24 +245,23 @@ const momo = async (req, res) => {
 };
 const update = async (req, res) => {
   try {
+    let tongTien = 0;
     let order = await DonHang.findById(req.params.id);
-    console.log(req.body);
     if (order) {
       if (req.body.items && req.body.items.length) {
         const products = await SanPham.find({
           id: { $in: req.body.items.map((i) => i.sanpham._id) },
         });
+        const discount = await Discount.findOne({ _id: req.body.Discount });
         if (products && products.length) {
           for (const [index, item] of req.body.items.entries()) {
             const p = products.find((i) => {
               return i._id.toString() === item.sanpham._id.toString();
             });
             if (!p) {
-              return res
-                .status(500)
-                .json({
-                  message: `Không tìm thấy sản phẩm id = ${item.sanpham}`,
-                });
+              return res.status(500).json({
+                message: `Không tìm thấy sản phẩm id = ${item.sanpham}`,
+              });
             } else if (
               p.SoLuong < 1 &&
               !order.items
@@ -269,7 +281,9 @@ const update = async (req, res) => {
                 .status(500)
                 .json({ message: `Sản phẩm id = ${p.code} không đủ số lượng` });
             } else {
+              console.log(item.soluong, p.DonGia, "Update")
               req.body.items[index].sanpham = p;
+              tongTien += item.soluong * p.DonGia
             }
           }
         } else {
@@ -277,8 +291,15 @@ const update = async (req, res) => {
             .status(500)
             .json({ message: "Không tìm thấy sản phẩm nào phù hợp" });
         }
+        if (discount) {
+          tongTien =
+            tongTien *
+              (100 - discount.discount) /
+            100;
+        } 
       }
     }
+    req.body.TongTien = tongTien
     order = await Object.assign(order, req.body).save();
     return res.status(200).json(order);
   } catch (err) {

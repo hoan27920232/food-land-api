@@ -7,6 +7,70 @@ import { cleanAccents } from "../../services/format/index.js";
 
 const AutoIncrement = AutoInrement(mongoose);
 const Schema = mongoose.Schema;
+export const addressSchema = new Schema({
+  // postCode: {
+  //   type: String,
+  //   maxlength: 10,
+  // },
+  provinceOrCity: {
+    name: {
+      type: String,
+      maxlength: 30,
+    },
+    id: {
+      type: String,
+      maxlength: 10,
+    },
+    pid: {
+      type: String,
+      maxlength: 10,
+    },
+    code: {
+      type: String,
+      maxlength: 10,
+    },
+  },
+  district: {
+    name: {
+      type: String,
+      maxlength: 30,
+    },
+    id: {
+      type: String,
+      maxlength: 10,
+    },
+    pid: {
+      type: String,
+      maxlength: 10,
+    },
+    code: {
+      type: String,
+      maxlength: 10,
+    },
+  },
+  ward: {
+    name: {
+      type: String,
+      maxlength: 30,
+    },
+    id: {
+      type: String,
+      maxlength: 10,
+    },
+    pid: {
+      type: String,
+      maxlength: 10,
+    },
+    code: {
+      type: String,
+      maxlength: 10,
+    },
+  },
+  detail: {
+    type: String,
+    maxlength: 100,
+  },
+})
 const khachhangSchema = new Schema({
   _id: Number,
   TenKhachHang: {
@@ -17,6 +81,7 @@ const khachhangSchema = new Schema({
     type: String,
     required: true,
   },
+  shippingAddress: addressSchema,
   email: {
     type: String,
     match: /^\S+@\S+\.\S+$/,
@@ -43,6 +108,7 @@ const khachhangSchema = new Schema({
     required: true
   },
 }, { timestamps: true, _id: false });
+
 khachhangSchema.pre("save",async function (next){
   try{
     const khachHang = this;

@@ -1,4 +1,5 @@
 import axiosClient from "../../services/axios/index.js";
+import donhang from "../models/DonHang.js";
 const calculateShip = async (req, res) => {
   try {
     // const getListPick = await axiosClient.get(`https://services.ghtklab.com/services/shipment/list_pick_add`, {
@@ -32,17 +33,12 @@ const calculateShip = async (req, res) => {
 };
 const postOrderGHTK = async (req, res) => {
   let ghtkToken = process.env.TOKEN_GHTK
-
-
   if (ghtkToken) {
     const orderFullInfo = req.body
     try {
       const result = await axios({
         method: 'post',
-        // Đường dẫn môi trường thật
         url: `${process.env.API_GHTK}/services/shipment/order/?ver=1.5`,
-        // Đường dẫn cho môi trường thử nghiệm
-        // url: 'https://services.ghtklab.com/services/shipment/order/?ver=1.5',
         headers: {
           Token: ghtkToken,
           'Content-Type': 'application/json',
@@ -53,7 +49,7 @@ const postOrderGHTK = async (req, res) => {
       })
       if (result.data.success === true) {
         // Update order fulfillmentStatus to shipped
-        const orderUpdated = await Order.updateOne({ code: orderFullInfo.order.id }, { fulfillmentStatus: 'shipped' })
+        // const orderUpdated = await donhang.updateOne({ code: orderFullInfo.order.id }, { fulfillmentStatus: 'shipped' })
         res.json({
           success: true,
           message: result.data.message,
