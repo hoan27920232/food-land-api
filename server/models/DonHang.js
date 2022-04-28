@@ -89,6 +89,9 @@ const donhangSchema = new Schema(
     Discount: {
       type: Number,
       ref: 'Discount'
+    },
+    note: {
+      type: String
     }
   },
   { timestamps: true }
