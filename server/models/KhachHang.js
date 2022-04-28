@@ -107,6 +107,9 @@ const khachhangSchema = new Schema({
     type: Boolean,
     required: true
   },
+  resetPassLink: {
+    type: String,
+  }
 }, { timestamps: true, _id: false });
 
 khachhangSchema.pre("save",async function (next){
@@ -114,6 +117,7 @@ khachhangSchema.pre("save",async function (next){
     const khachHang = this;
   if(khachHang.isModified("password"))
   {
+    console.log(khachHang.password)
     khachHang.password = await bcrypt.hash(khachHang.password,10)
   }
   next()

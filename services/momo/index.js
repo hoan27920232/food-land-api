@@ -17,7 +17,7 @@ export const request_momo = async (order) => {
   var ipnUrl = `${process.env.API_URL}api/donhangs/momo`;
   var payUrl = "";
   // var ipnUrl = redirectUrl = "https://webhook.site/454e7b77-f177-4ece-8236-ddf1c26ba7f8";
-  var amount = order.TongTien;
+  var amount = order.TongTien + order.shipMoney;
   var requestType = "captureWallet";
   var extraData = ""; //pass empty value if your merchant does not have stores
   //before sign HMAC SHA256 with format

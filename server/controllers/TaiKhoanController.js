@@ -4,14 +4,21 @@ import { cleanAccents } from "../../services/format/index.js";
 
 const index = ({ querymen: { query, select, cursor } }, res, next) => {
   if (query.keywords) {
-    query.keywords = query.keywords.toString().replace(/[^\w\s]/gi, ' ').replace(/%40/g, '@')
+    query.keywords = query.keywords
+      .toString()
+      .replace(/[^\w\s]/gi, " ")
+      .replace(/%40/g, "@");
     // query.keywords = cleanAccents(query.keywords)
-    query.keywords = (query.keywords instanceof RegExp) ? query.keywords : new RegExp((query.keywords), 'i')
+    query.keywords =
+      query.keywords instanceof RegExp
+        ? query.keywords
+        : new RegExp(query.keywords, "i");
   }
   TaiKhoan.count(query)
     .then((count) => {
-      return TaiKhoan.find(query, select, cursor).sort({ createdAt: -1 })
-        .populate("Avatar",'source')
+      return TaiKhoan.find(query, select, cursor)
+        .sort({ createdAt: -1 })
+        .populate("Avatar", "source")
         .then((taikhoan) => ({
           result: {
             totalCount: count,
@@ -26,21 +33,23 @@ const index = ({ querymen: { query, select, cursor } }, res, next) => {
       return res.status(200).json(data);
     })
     .catch((err) => {
-      return res.status(500).json({ message: err.message})
+      return res.status(500).json({ message: err.message });
     });
 };
 const register = async (req, res) => {
   try {
     const checkEmail = await TaiKhoan.find({ email: req.body.email });
-    console.log(req.body)
+    console.log(req.body);
     if (checkEmail && checkEmail.length) {
       return res.status(409).json({
         message: "Email existed",
       });
     } else {
-      const taiKhoan = await TaiKhoan.create(req.body).catch(err => res.status(500).json({ message: err}));
+      const taiKhoan = await TaiKhoan.create(req.body).catch((err) =>
+        res.status(500).json({ message: err })
+      );
       return res.status(200).json({
-        taiKhoan
+        taiKhoan,
       });
     }
   } catch (err) {
@@ -50,25 +59,27 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const user = req.user;
-    if(user.user.TrangThai == true){
+    if (user.user.TrangThai == true) {
       const token = jwt.sign(user, process.env.JWT_KEY);
-    return res.status(200).json({ ...user, token });
-    }else{
-      return res.status(500).json({ message : "Tài khoản bị khóa "})
+      return res.status(200).json({ ...user, token });
+    } else {
+      return res.status(500).json({ message: "Tài khoản bị khóa " });
     }
   } catch (err) {
-    return res.status(401).json({ message: "Có lỗi không cấp quyền đăng nhập được" });
+    return res
+      .status(401)
+      .json({ message: "Có lỗi không cấp quyền đăng nhập được" });
   }
 };
-// get me 
+// get me
 const userInfo = (req, res) => {
-  try{
-    if(req.user.user.TrangThai == true){
-      return res.status(200).json(req.user)
-    }else{
-      return res.status(401).json({ message : 'User blocked'})
+  try {
+    if (req.user.user.TrangThai == true) {
+      return res.status(200).json(req.user);
+    } else {
+      return res.status(401).json({ message: "User blocked" });
     }
-  }catch(err){
+  } catch (err) {
     return res.status(401).json({ message: err.message });
   }
 };
@@ -84,23 +95,32 @@ const show = async ({ params }, res) => {
     .catch((err) => res.status(500).json({ message: err.message }));
 };
 const update = async (req, res) => {
-  try{
-    console.log('Hello')
+  try {
+    console.log("Hello");
     TaiKhoan.findById({ _id: req.params.id })
-    .then((data) => (data ? Object.assign(data, req.body).save().then(t => t.populate("Avatar")) : null))
-    .then(data => {
-        const token = jwt.sign({user: data}, process.env.JWT_KEY);
-        return res.status(201).json({ message: "Update success",token: token })
-    })
+      .then((data) =>
+        data
+          ? Object.assign(data, req.body)
+              .save()
+              .then((t) => t.populate("Avatar"))
+          : null
+      )
+      .then((data) => {
+        const token = jwt.sign({ user: data }, process.env.JWT_KEY);
+        return res
+          .status(201)
+          .json({ message: "Update success", token: token });
+      })
       .catch((err) => res.status(500).json({ message: err.message }));
-  }catch(err){
-    console.log('Fail')
-    console.log(err.message)
+  } catch (err) {
+    console.log("Fail");
+    console.log(err.message);
   }
 };
-const remove = async ( req, res) => {
+const remove = async (req, res) => {
   TaiKhoan.deleteById({ _id: req.params.id })
     .then(() => res.status(201).json({ message: "Delete success" }))
-    .catch((err) =>  res.status(500).json({ message: err.message}));
+    .catch((err) => res.status(500).json({ message: err.message }));
 };
-export { index, register, login, userInfo,show, update, remove};
+
+export { index, register, login, userInfo, show, update, remove };

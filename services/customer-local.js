@@ -11,10 +11,10 @@ const passportLocal = new pplocal(
     // You should use database to check for user credentials.]
     
     try{
-      console.log("Before call back customer")
+      console.log("Before call back customer", email)
     const customer = await KhachHang.findOne({ email: email });
+    console.log(customer)
     if (!customer) {
-
         callback(null, false);
         return;
     }

@@ -1,7 +1,7 @@
 import passport from "../../services/passport/index.js";
 import express from "express";
 import axiosClient from "../../services/axios/index.js";
-import {calculateShip} from '../controllers/GHTKController.js'
+import {calculateShip, postOrderGHTK, deleteGHTK} from '../controllers/GHTKController.js'
 const router = express.Router();
 
 router.get("/vnlocations/:parent", async function (req, res, next) {
@@ -14,5 +14,6 @@ router.get("/vnlocations/:parent", async function (req, res, next) {
 router.get('/calculateShip',calculateShip);
 //   router.get('/listPickAdd', getPickAddresses)
 //   router.get('/shipFee', getShipFee)
-//   router.post('/postOrder', postOrderGHTK)
+  router.post('/postOrder', postOrderGHTK)
+  router.post('/deleteOrder/:id', deleteGHTK)
 export default router;

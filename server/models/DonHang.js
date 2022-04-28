@@ -61,8 +61,9 @@ const donhangSchema = new Schema(
       type: Number,
       // hoan thanh hay chua hoan thanh
       // 0 tao
-      // 1 hoan thanh
-      enum: [0, 1],
+      // 1 createGHTK
+      // 2 done
+      enum: [0, 1, 2],
       required: true,
     },
     shipMoney: {

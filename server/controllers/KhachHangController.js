@@ -1,23 +1,30 @@
 import KhachHang from "../models/KhachHang.js";
 import jwt from "jsonwebtoken";
 import { cleanAccents } from "../../services/format/index.js";
+import { sendGmail } from "../../services/nodemailer/index.js";
+
 const index = ({ querymen: { query, select, cursor } }, res, next) => {
   if (query.keywords) {
-    query.keywords = query.keywords.toString().replace(/[^\w\s]/g, ' ')
+    query.keywords = query.keywords.toString().replace(/[^\w\s]/g, " ");
     // query.keywords = cleanAccents(query.keywords)
-    query.keywords = (query.keywords instanceof RegExp) ? query.keywords : new RegExp((query.keywords), 'i')
+    query.keywords =
+      query.keywords instanceof RegExp
+        ? query.keywords
+        : new RegExp(query.keywords, "i");
   }
   KhachHang.count(query)
     .then((count) => {
-      return KhachHang.find(query, select, cursor).sort({ createdAt: -1 }).then((khachhang) => ({
-        result: {
-          totalCount: count,
-          totalPage: Math.ceil(count / cursor.limit),
-          pageSize: cursor.limit,
-          pageNo: Math.floor(cursor.skip / cursor.limit) + 1,
-          data: khachhang,
-        },
-      }));
+      return KhachHang.find(query, select, cursor)
+        .sort({ createdAt: -1 })
+        .then((khachhang) => ({
+          result: {
+            totalCount: count,
+            totalPage: Math.ceil(count / cursor.limit),
+            pageSize: cursor.limit,
+            pageNo: Math.floor(cursor.skip / cursor.limit) + 1,
+            data: khachhang,
+          },
+        }));
     })
     .then((data) => {
       return res.status(200).json(data);
@@ -29,7 +36,7 @@ const index = ({ querymen: { query, select, cursor } }, res, next) => {
 
 const userInfo = (req, res) => {
   try {
-    console.log(req.user)
+    console.log(req.user);
     if (req.user.customer.TrangThai == true) {
       return res.status(200).json(req.user.customer);
     } else {
@@ -95,9 +102,11 @@ const update = async (req, res) => {
     KhachHang.findById({ _id: req.params.id })
       .then((data) => (data ? Object.assign(data, req.body).save() : null))
       .then((data) => {
-        const token = jwt.sign({customer: data}, process.env.JWT_KEY);
-        console.log(data)
-        return res.status(201).json({ message: "Update success",token: token })
+        const token = jwt.sign({ customer: data }, process.env.JWT_KEY);
+        console.log(data);
+        return res
+          .status(201)
+          .json({ message: "Update success", token: token });
       })
       .catch((err) => {
         console.log(err.message);
@@ -112,5 +121,67 @@ const remove = async (req, res) => {
     .then(() => res.status(201).json({ message: "Delete success" }))
     .catch((err) => res.status(500).json({ message: err.message }));
 };
+const getLinkRestPass = async (req, res) => {
+  try {
+    const customer = await KhachHang.findOne({ email: req.body.email });
 
-export { index, register, login, userInfo, update, remove, show };
+    if (customer) {
+      const tokenReset = jwt.sign(
+        { user: req.body.email },
+        process.env.JWT_KEY,
+        { expiresIn: "20m" }
+      );
+      await sendGmail({
+        to: req.body.email,
+        subject: `Reset password`,
+        message: `${process.env.WEB_URL}account/resetpassword?q=${tokenReset}`,
+      });
+      await KhachHang.findOneAndUpdate(
+        { email: req.body.email },
+        {
+          resetPassLink: `${process.env.WEB_URL}account/resetpassword?q=${tokenReset}`,
+        }
+      );
+      return res.status(200).json({ msg: "Send link success" });
+    } else {
+      return res.status(500).json({ msg: "Không có khách hàng này" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Send failed" });
+  }
+};
+const resetPass = async (req, res) => {
+  try {
+    const { resetToken, newPassword } = req.body;
+    let resetLink = `${process.env.WEB_URL}account/resetpassword?q=${resetToken}`;
+    await jwt.verify(
+      resetToken,
+      process.env.JWT_KEY,
+      async (error, decodeData) => {
+        if (error) {
+          return res.status(401).json({ error: "Incorrect token " });
+        }
+        const customer = await KhachHang.findOne({ resetLink });
+        console.log(customer);
+        customer.password = newPassword;
+        await customer.save();
+        return res.status(200).json({ msg: "Reset success" });
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ msg: "Reset failed" });
+  }
+};
+export {
+  index,
+  register,
+  login,
+  userInfo,
+  update,
+  remove,
+  show,
+  getLinkRestPass,
+  resetPass,
+};

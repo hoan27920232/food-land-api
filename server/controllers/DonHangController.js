@@ -219,12 +219,10 @@ const momo = async (req, res) => {
     const responseTime = req.body.responseTime;
     var signatureReceive = req.body.signature;
     const rawSignature = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&message=${message}&orderId=${orderId}&orderInfo=${orderInfo}&orderType=${orderType}&partnerCode=${partnerCode}&payType=${payType}&requestId=${requestId}&responseTime=${responseTime}&resultCode=${resultCode}&transId=${transId}`;
-    console.log(rawSignature, "----------");
     var signature = crypto
       .createHmac("sha256", secretkey)
       .update(rawSignature)
       .digest("hex");
-    console.log(rawSignature, signatureReceive, signature);
     if (signatureReceive !== signature) {
       return res.status(500).json({ err: "Signature wrong" });
     }
