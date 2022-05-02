@@ -29,22 +29,22 @@ const calculateShip = async (req, res) => {
 };
 const postOrderGHTK = async (req, res) => {
   let ghtkToken = process.env.TOKEN_GHTK;
-  let getListPick = await axiosClient.get(
-    "/services/shipment/list_pick_add",
-    {
-      headers: {
-        Token: ghtkToken,
-      },
-    }
-  );
+  // let getListPick = await axiosClient.get(
+  //   "/services/shipment/list_pick_add",
+  //   {
+  //     headers: {
+  //       Token: ghtkToken,
+  //     },
+  //   }
+  // );
 
-  getListPick = getListPick.data[0];
+  // getListPick = getListPick.data[0];
   const pick_name = 'Đỗ Bá Hoàn'
   const pick_address = 'Số nhà 01,  Ngách 9/4 cụm 10, Đan Phượng, Hà Nội';
   const pick_province = "Hà Nội";
   const pick_district = "Đan Phượng";
   const pick_tel = '0354732260'
-  console.log(getListPick);
+  // console.log(getListPick);
   if (ghtkToken) {
     const orderFullInfo = req.body;
     orderFullInfo.order = {

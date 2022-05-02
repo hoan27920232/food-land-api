@@ -155,6 +155,7 @@ const resetPass = async (req, res) => {
   try {
     const { resetToken, newPassword } = req.body;
     let resetLink = `${process.env.WEB_URL}account/resetpassword?q=${resetToken}`;
+    console.log(resetLink)
     await jwt.verify(
       resetToken,
       process.env.JWT_KEY,
@@ -162,7 +163,7 @@ const resetPass = async (req, res) => {
         if (error) {
           return res.status(401).json({ error: "Incorrect token " });
         }
-        const customer = await KhachHang.findOne({ resetLink });
+        const customer = await KhachHang.findOne({ resetPassLink: resetLink });
         console.log(customer);
         customer.password = newPassword;
         await customer.save();
