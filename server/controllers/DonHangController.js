@@ -40,7 +40,7 @@ const index = ({ querymen: { query, select, cursor } }, res, next) => {
           options: { withDeleted: true },
         })
         .populate({
-          path: "Discount",
+          path: "MaDiscount",
           options: { withDeleted: true },
         })
         .then((donhang) => ({
@@ -116,7 +116,7 @@ const create = async (req, res) => {
       const products = await SanPham.find({
         _id: { $in: req.body.items.map((i) => i.sanpham._id) },
       });
-      const discount = await Discount.findOne({ _id: req.body.Discount });
+      const discount = await Discount.findOne({ _id: req.body.MaDiscount });
       if (products && products.length) {
         let notice = "";
         let count = 0;
@@ -180,10 +180,10 @@ const create = async (req, res) => {
         return { data, payUrl };
       })
       .then(async (data) => {
-        const adminTitle = "New order from Food Land";
+        const adminTitle = "New order from Tay Bac";
         await sendGmail({
           to: data.data.email || "allfallsdown20@gmail.com",
-          subject: `New order from foodland.com [${data.data._id}]`,
+          subject: `New order from Tay Bac.com [${data.data._id}]`,
           message: pug.renderFile(`${__dirname}/template.pug`, {
             title: adminTitle,
             order: data.data,
@@ -311,5 +311,22 @@ const remove = async (req, res) => {
     .then(() => res.status(201).json({ message: "Delete success" }))
     .catch((err) => res.status(500).json({ message: err.message }));
 };
-
-export { index, create, update, remove, show, momo, filter };
+const updateShipment = async (req, res) => {
+  try{
+    const { partner_id, status_id} = req.body
+  if(status_id == 4) {
+    let order = await DonHang.findById(partner_id);
+    order.TrangThai = 2
+    await order.save()
+  } else if (status_id == -1 || status_id == 9) {
+    let order = await DonHang.findById(partner_id);
+    order.TrangThai = -1
+    await order.save()
+  }
+  return res.status(200).json("Update order")
+  }catch(err) {
+    console.log(err)
+    return res.status(500).json("Err")
+  }
+}
+export { index, create, update, remove, show, momo, filter, updateShipment };

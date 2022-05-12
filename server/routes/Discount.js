@@ -4,6 +4,7 @@ import {
     create,
     update,
     remove,
+    getByCode,
   } from "../controllers/DiscountController.js";
   import passport from "../../services/passport/index.js";
   import express from "express";
@@ -15,5 +16,5 @@ import {
   router.post('/',passport.authenticate('jwt', { session: false }), create)
   router.put('/:id',passport.authenticate('jwt', { session: false }),update)
   router.delete('/:id',passport.authenticate('jwt', { session: false }),remove)
-  
+  router.get('/get-by-code/:id', getByCode)
   export default router;

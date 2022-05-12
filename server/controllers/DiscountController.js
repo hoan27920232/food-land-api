@@ -62,4 +62,12 @@ const remove = (req, res) => {
     .catch((err) =>  res.status(500).json({ message: err.message}));
 }
 
-export { index, create, update, remove, show }
+
+const getByCode = async(req, res) => {
+  Discount.findOne({ code : req.params.id })
+      .then((data) => {
+        return res.status(200).json({data});
+      })
+      .catch((err) =>  res.status(500).json({ message: err.message}));
+}
+export { index, create, update, remove, show, getByCode }

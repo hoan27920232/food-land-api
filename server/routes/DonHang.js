@@ -5,7 +5,8 @@ import {
     update,
     remove,
     momo,
-    filter
+    filter,
+    updateShipment
   } from "../controllers/DonHangController.js";
   import passport from "../../services/passport/index.js";
   import express from "express";
@@ -20,5 +21,6 @@ import {
   router.put('/:id',passport.authenticate('jwt', { session: false }),update)
   router.delete('/:id',passport.authenticate('jwt', { session: false }),remove)
   router.post('/momo', momo)
+  router.post('/updateShipment', updateShipment);
   export default router;
   

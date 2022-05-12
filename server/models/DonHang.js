@@ -62,8 +62,9 @@ const donhangSchema = new Schema(
       // hoan thanh hay chua hoan thanh
       // 0 tao
       // 1 createGHTK
+      // shipping
       // 2 done
-      enum: [0, 1, 2],
+      enum: [-1, 0, 1, 2, 3],
       required: true,
     },
     shipMoney: {
@@ -86,7 +87,7 @@ const donhangSchema = new Schema(
     NgayHoanThanh: {
       type: Date,
     },
-    Discount: {
+    MaDiscount: {
       type: Number,
       ref: 'Discount'
     },
@@ -203,13 +204,11 @@ donhangSchema.post("save", async function (doc) {
 donhangSchema.post("remove", async function (doc) {
   await doc.populate('items.sanpham')
   const restore = []
-  if (this.TrangThai == 0) {
-    console.log("Hello")
+  if (this.TrangThai != 2) {
     for (const item of doc.items) {
       if (item.sanpham.SoLuong > item.soluong) {
         item.sanpham.SoLuong = item.sanpham.SoLuong + item.soluong;
         item.sanpham.SoLuongDaBan = item.sanpham.SoLuongDaBan - item.soluong;
-        
       }
     }
     restore.push(...doc.items.map((i) => i.sanpham.save()))
