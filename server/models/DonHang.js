@@ -120,6 +120,7 @@ donhangSchema.post("save", async function (doc) {
     }
     doc.items.map((i) => i.sanpham.save());
   } else {
+    console.log(this.oldStatus, doc.TrangThai, "Trạng thái sau khi sửa lần lượt");
     await doc.populate("items.sanpham");
     const oldProducts = await this.model("SanPham").find({
       _id: { $in: this._oldItems.map((i) => i.sanpham) },

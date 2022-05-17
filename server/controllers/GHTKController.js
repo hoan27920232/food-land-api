@@ -39,11 +39,11 @@ const postOrderGHTK = async (req, res) => {
   // );
 
   // getListPick = getListPick.data[0];
-  const pick_name = 'Đỗ Bá Hoàn'
+  const pick_name = 'Đỗ Bá Hoàn';
   const pick_address = 'Số nhà 01,  Ngách 9/4 cụm 10, Đan Phượng, Hà Nội';
   const pick_province = "Hà Nội";
   const pick_district = "Đan Phượng";
-  const pick_tel = '0354732260'
+  const pick_tel = '0354732260';
   // console.log(getListPick);
   if (ghtkToken) {
     const orderFullInfo = req.body;
