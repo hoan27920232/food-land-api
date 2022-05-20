@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
-// import mongooseSlug from "mongoose-slug-generator";
+import mongooseSlug from "mongoose-slug-generator";
 import mongooseKeywords from "mongoose-keywords";
 import AutoInrement from "mongoose-sequence";
-import mongoSlug from "mongoose-slug-plugin";
 import dayjs from "dayjs";
 import { cleanAccents } from "../../services/format/index.js";
 const AutoIncrement = AutoInrement(mongoose);
@@ -75,16 +74,29 @@ const sanphamSchema = new Schema(
       {
         type: Number,
         ref: "HinhAnh",
+        required: true
       },
     ],
     DanhMucSP: {
       type: Number,
       ref: "DanhMucSanPham",
+      required: true,
     },
     averageRating: {
       type: Number,
       default: 5,
     },
+    GiamGia: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0
+    },
+    NgayHetHan: {
+      type: Date,
+      required:true,
+    },
+    slug: { type: String, slug: "TenSanPham" }
   },
   { timestamps: true }
 );
@@ -110,7 +122,7 @@ const sanphamSchema = new Schema(
 //       : view;
 //   },
 // };
-// mongoose.plugin(mongooseSlug);
+mongoose.plugin(mongooseSlug);
 sanphamSchema.path("codeCounter").set(function (counter) {
   this.code = `PRODUCT-${new Date().getFullYear()}${counter
     .toString()
@@ -127,10 +139,10 @@ sanphamSchema.plugin(AutoIncrement, { inc_field: "codeCounter" });
 sanphamSchema.plugin(mongooseKeywords, {
   paths: ["code", "TenSanPham"],
 });
-sanphamSchema.plugin(mongoSlug, {
-  tmpl: "<%=TenSanPham%>-<%=dayjs(new Date()).format('YYYY-MM-DD-HH-mm-ss')%>",
-  locals: { dayjs },
-});
+// sanphamSchema.plugin(mongoSlug, {
+//   tmpl: "<%=TenSanPham%>-<%=dayjs(new Date()).format('YYYY-MM-DD-HH-mm-ss')%>",
+//   locals: { dayjs },
+// });
 // sanphamSchema.plugin(AutoIncrement, { id: "product_id", inc_field: "_id" });
 // sanphamSchema.plugin(mongoose_delete, {
 //   deletedAt: true,

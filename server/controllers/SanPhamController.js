@@ -1,7 +1,6 @@
 import Product from "../models/SanPham.js";
 import DonHang from "../models/DonHang.js";
 import mongoose from "mongoose";
-import { cleanAccents } from "../../services/format/index.js";
 
 const index = ({ querymen: { query, select, cursor } }, res, next) => {
   if (query.keywords) {
@@ -143,4 +142,5 @@ const comment = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
 export { index, show, create, update, remove, comment };

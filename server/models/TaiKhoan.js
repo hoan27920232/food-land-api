@@ -37,7 +37,8 @@ const userSchema = new Schema(
       type: String,
       trim: true,
     },
-    roles: {
+    // role 0 admin, 1 nhan vien
+    role: {
       type: Number,
       enum: [0, 1],
       required: true,
@@ -62,7 +63,6 @@ const userSchema = new Schema(
 // }
 userSchema.pre("save", async function(next) {
   const user = this;
-  console.log(user)
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 10);
   }
@@ -75,7 +75,7 @@ userSchema.plugin(mongoose_delete, {
   withDeleted: true
 });
 userSchema.plugin(mongooseKeywords, {
-  paths: ["_id", "email", "SDT"]
+  paths: ["_id", "TenNhanVien", "SDT"]
 });
 // userSchema.statics.checkLogin = async (email,pass) => {
 //   const user = await TaiKhoan.find({ email })

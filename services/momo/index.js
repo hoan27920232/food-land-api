@@ -11,7 +11,7 @@ export const request_momo = async (order) => {
   var accessKey = process.env.ACCESS_KEY;
   var secretkey = process.env.SECRET_KEY;
   var requestId = partnerCode + new Date().getTime();
-  var orderId = 'ORDERMOMO-' + order._id;
+  var orderId = 'ORDERMM-' + order._id;
   var orderInfo = "paywithMoMo";
   var redirectUrl = process.env.WEB_URL + "checkout/confirm";
   var ipnUrl = `${process.env.API_URL}api/donhangs/momo`;

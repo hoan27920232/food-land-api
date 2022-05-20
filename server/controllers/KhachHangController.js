@@ -5,7 +5,7 @@ import { sendGmail } from "../../services/nodemailer/index.js";
 
 const index = ({ querymen: { query, select, cursor } }, res, next) => {
   if (query.keywords) {
-    query.keywords = query.keywords.toString().replace(/[^\w\s]/g, " ");
+    // query.keywords = query.keywords.toString().replace(/[^\w\s]/g, " ");
     // query.keywords = cleanAccents(query.keywords)
     query.keywords =
       query.keywords instanceof RegExp

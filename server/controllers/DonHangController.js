@@ -109,6 +109,46 @@ const show = async ({ params }, res) => {
     })
     .catch((err) => res.status(500).json({ message: err.message }));
 };
+const exportexcel = ({ querymen: { query, select, cursor } }, res, next) => {
+  const now = new Date();
+
+  query.filter = {
+    createdAt: {
+      $gte: new Date(now.getFullYear(), now.getMonth(), 1)
+    }
+  }
+  DonHang.count(query)
+    .then((count) => {
+      return DonHang.find(query)
+        .populate({
+          path: "items.sanpham",
+          fields: "DonGia",
+          populate: {
+            path: "AnhMoTa",
+            fields: "source",
+            options: { withDeleted: true },
+          },
+          // options: { withDeleted: true },
+        })
+        .populate({
+          path: "MaKhachHang",
+          options: { withDeleted: true },
+        })
+        .populate({
+          path: "MaTaiKhoan",
+          options: { withDeleted: true },
+        })
+        .then((donhang) => ({
+          data: donhang,
+        }));
+    })
+    .then((data) => {
+      return res.status(200).json(data);
+    })
+    .catch((err) => {
+      return res.status(500).json({ message: err.message });
+    });
+};
 const create = async (req, res) => {
   try {
     let tongTien = 0;
@@ -138,7 +178,12 @@ const create = async (req, res) => {
               notice + `Sản phẩm có id bằng ${p.code} không đủ số lượng \n`;
           } else {
             req.body.items[index].sanpham = p;
-            tongTien += item.soluong * p.DonGia
+            console.log(p, "San pham")
+            if(p.GiamGia > 0) {
+              tongTien += item.soluong * p.DonGia * (1 - p.GiamGia / 100)
+            } else {
+              tongTien += item.soluong * p.DonGia
+            }
           }
         }
         if (count > 0) {
@@ -281,7 +326,12 @@ const update = async (req, res) => {
             } else {
               console.log(item.soluong, p.DonGia, "Update")
               req.body.items[index].sanpham = p;
-              tongTien += item.soluong * p.DonGia
+              if(p.GiamGia > 0) {
+                tongTien += item.soluong * p.DonGia * (1 - p.GiamGia / 100)
+              } else {
+                tongTien += item.soluong * p.DonGia
+
+              }
             }
           }
         } else {
@@ -322,6 +372,12 @@ const updateShipment = async (req, res) => {
     let order = await DonHang.findById(partner_id);
     order.TrangThai = -1
     await order.save()
+  } 
+  else if (status_id == 5) {
+    let order = await DonHang.findById(partner_id);
+    order.TrangThai = 3
+    order.NgayHoanThanh = Date.now()
+    await order.save()
   }
   return res.status(200).json("Update order")
   }catch(err) {
@@ -329,4 +385,4 @@ const updateShipment = async (req, res) => {
     return res.status(500).json("Err")
   }
 }
-export { index, create, update, remove, show, momo, filter, updateShipment };
+export { index, create, update, remove, show, momo, filter, exportexcel, updateShipment };

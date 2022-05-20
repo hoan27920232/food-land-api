@@ -6,6 +6,7 @@ import {
     remove,
     momo,
     filter,
+    exportexcel,
     updateShipment
   } from "../controllers/DonHangController.js";
   import passport from "../../services/passport/index.js";
@@ -15,6 +16,7 @@ import {
   
   router.get('/',query(),index)
   router.get('/filter',query(),filter)
+  router.get('/exportexcel',query(),exportexcel)
 
   router.get('/:id',show)
   router.post('/',passport.authenticate('jwt', { session: false }), create)

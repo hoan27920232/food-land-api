@@ -16,10 +16,13 @@ export const addressSchema = new Schema({
     name: {
       type: String,
       maxlength: 30,
+      required: true,
     },
     id: {
       type: String,
       maxlength: 10,
+      required: true,
+
     },
     pid: {
       type: String,
@@ -28,16 +31,19 @@ export const addressSchema = new Schema({
     code: {
       type: String,
       maxlength: 10,
+      required: true,
     },
   },
   district: {
     name: {
       type: String,
       maxlength: 30,
+      required: true,
     },
     id: {
       type: String,
       maxlength: 10,
+      required: true,
     },
     pid: {
       type: String,
@@ -46,16 +52,19 @@ export const addressSchema = new Schema({
     code: {
       type: String,
       maxlength: 10,
+      required: true,
     },
   },
   ward: {
     name: {
       type: String,
       maxlength: 30,
+      required: true,
     },
     id: {
       type: String,
       maxlength: 10,
+      required: true,
     },
     pid: {
       type: String,
@@ -64,11 +73,13 @@ export const addressSchema = new Schema({
     code: {
       type: String,
       maxlength: 10,
+      required: true,
     },
   },
-  detail: {
+  DiaChiDetail: {
     type: String,
     maxlength: 100,
+    required: true,
   },
 })
 const khachhangSchema = new Schema({
@@ -77,11 +88,7 @@ const khachhangSchema = new Schema({
     type: String,
     required: true,
   },
-  DiaChi: {
-    type: String,
-    required: true,
-  },
-  shippingAddress: addressSchema,
+  DiaChi: addressSchema,
   email: {
     type: String,
     match: /^\S+@\S+\.\S+$/,
@@ -126,7 +133,7 @@ khachhangSchema.pre("save",async function (next){
   }
 })
 khachhangSchema.plugin(mongooseKeywords, {
-  paths: ["_id", "email", "SDT", "TenKhachHang"]
+  paths: ["_id", "SDT", "TenKhachHang"]
 });
 khachhangSchema.plugin(AutoIncrement, { id: "customer_id", inc_field: "_id" });
 khachhangSchema.plugin(mongoose_delete, {

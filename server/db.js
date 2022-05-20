@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const urlMongodb = process.env.MONGODB_URL || "mongodb://localhost/food-land"
+const urlMongodb = process.env.MONGODB_URL || "mongodb://localhost/tay-bac"
 mongoose.connect(urlMongodb,{
     useNewUrlParser: true,
     useUnifiedTopology: true,

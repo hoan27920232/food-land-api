@@ -40,11 +40,7 @@ const donhangSchema = new Schema(
     GhiChu: {
       type: String,
     },
-    DiaChi: {
-      type: String,
-      required: true,
-    },
-    shippingAddress: addressSchema,
+    DiaChi: addressSchema,
     feeShipping: {
       type: Number,
       default: 0
